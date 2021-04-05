@@ -31,4 +31,13 @@ float v2_length_sqrt(V2 v);
 float v2_length(V2 v);
 V2 v2_normailize(V2 v);
 
+struct M2
+{
+    float m[4];
+};
+
+M2 m2_identity();
+M2 m2_ortho(float left, float rigth, float top, float bottom);
+V2 operator*(V2 v, M2 m);
+
 #endif //MATH_H

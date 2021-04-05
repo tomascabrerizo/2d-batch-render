@@ -95,3 +95,30 @@ V2 v2_normailize(V2 v)
     float l = v2_length(v);
     return V2(v.x/l, v.y/l);
 }
+
+M2 m2_ortho(float left, float rigth, float top, float bottom)
+{
+    //NOTE: This m2_ortho do not translate, just scale
+    M2 result = {};
+    result.m[0] = 2 / (rigth - left);
+    result.m[1] = 0;
+    result.m[2] = 0;
+    result.m[3] = 2 / (top - bottom);
+    return result;
+}
+
+M2 m2_identity()
+{
+    M2 result = {};
+    result.m[0] = 1;
+    result.m[1] = 0;
+    result.m[2] = 0;
+    result.m[3] = 1;
+    return result;
+
+}
+
+V2 operator*(V2 v, M2 m)
+{
+    return V2(v.x*m.m[0]+v.y*m.m[2], v.x*m.m[1]+v.y*m.m[3]);
+}

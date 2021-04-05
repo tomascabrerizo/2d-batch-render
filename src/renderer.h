@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "shapes.h"
+#include "math.h"
 
 #define MAX_RENDERER_CAPACITY (1024)
 struct Renderer
@@ -15,10 +16,12 @@ struct Renderer
     uint32_t vertex_buffer;
 
     Renderer();
+    void init(int width, int height);
     void begin();
     void end();
     
     void draw_triangle(Triangle triangle);
+    void draw_rect(Rect rect);
 };
 
 uint32_t shader_create_program(const char* vert_path, const char* frag_path);

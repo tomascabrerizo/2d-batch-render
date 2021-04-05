@@ -70,6 +70,16 @@ Renderer::Renderer()
     glEnableVertexAttribArray(location);
 }
 
+void Renderer::init(int width, int height)
+{
+    //TODO: make this transfomation with a mat2
+    glUseProgram(program);
+    uint32_t u_width = glGetUniformLocation(program, "width");
+    uint32_t u_height = glGetUniformLocation(program, "height");
+    glUniform1f(u_width, (float)width);
+    glUniform1f(u_height, (float)height);
+}
+
 void Renderer::begin()
 {
     buffer_index = 0;
@@ -87,4 +97,11 @@ void Renderer::draw_triangle(Triangle triangle)
 {
     buffer[buffer_index]= triangle;
     buffer_index++;
+}
+
+void Renderer::draw_rect(Rect rect)
+{
+    Rect_Split triangles = rect.split();
+    draw_triangle(triangles.lower);
+    draw_triangle(triangles.upper);
 }
