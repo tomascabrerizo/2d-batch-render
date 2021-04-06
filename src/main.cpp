@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "renderer.h"
+#include "texture_atlas.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -56,6 +57,16 @@ int main(int argc, char** argv)
         };
     }
 
+    //Texture atlas test
+    Texture_Atlas ta = {};
+    ta.load_image("./res/heightmap.bmp");
+    ta.load_image("./res/woodbox.bmp");
+    ta.load_image("./res/luffy.bmp");
+    ta.load_image("./res/grass.bmp");
+    Image ta_image = ta.generate();
+    ta.free_images();
+    Image::save_bmp(ta_image, "./res/texture_atlas.bmp");
+    printf("width: %d, height: %d\n", ta_image.width, ta_image.height);
 
     bool quit = false;
     while(!quit)

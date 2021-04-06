@@ -56,11 +56,11 @@ uint32_t shader_create_program(const char* vert_path, const char* frag_path)
 Renderer::Renderer()
 {
     program = shader_create_program("./shaders/shader.vert", "./shaders/shader.frag");
-    buffer_index = 0;
+    array_index = 0;
     
     glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), buffer, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_array), vertex_array, GL_DYNAMIC_DRAW);
     uint32_t location = glGetAttribLocation(program, "vertex");
     glVertexAttribPointer(location, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(location);
@@ -85,28 +85,28 @@ void Renderer::init(int width, int height)
 
 void Renderer::begin()
 {
-    buffer_index = 0;
+    array_index = 0;
 }
 
 void Renderer::end()
 {
     glUseProgram(program);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Triangle)*buffer_index, buffer);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Triangle)*array_index, vertex_array);
     
     glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Colorf)*buffer_index*3, color_array);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Colorf)*array_index*3, color_array);
     
-    glDrawArrays(GL_TRIANGLES, 0, buffer_index*3); 
+    glDrawArrays(GL_TRIANGLES, 0, array_index*3); 
 }
 
 void Renderer::draw_triangle(Triangle triangle, Color color)
 {
-    buffer[buffer_index]= triangle;
-    color_array[buffer_index*3+0] = to_colorf(color);
-    color_array[buffer_index*3+1] = to_colorf(color);
-    color_array[buffer_index*3+2] = to_colorf(color);
-    buffer_index++;
+    vertex_array[array_index]= triangle;
+    color_array[array_index*3+0] = to_colorf(color);
+    color_array[array_index*3+1] = to_colorf(color);
+    color_array[array_index*3+2] = to_colorf(color);
+    array_index++;
 }
 
 void Renderer::draw_rect(Rect rect, Color color)

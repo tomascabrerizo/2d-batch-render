@@ -9,9 +9,10 @@
 #define MAX_RENDERER_CAPACITY (10000)
 struct Renderer
 {
-    Triangle buffer[MAX_RENDERER_CAPACITY];
+    Triangle vertex_array[MAX_RENDERER_CAPACITY];
     Colorf color_array[MAX_RENDERER_CAPACITY*3];
-    uint32_t buffer_index;
+    //TODO: ADD texture coordinates array
+    uint32_t array_index;
 
     uint32_t program;
     uint32_t vertex_buffer;
