@@ -79,7 +79,7 @@ int main(int argc, char** argv)
         {
             for(int x = 0; x < cols; ++x)
             {
-                renderer.draw_rect({V2(x*size, y*size), V2(size, size)}, 
+                renderer.draw_rect(x*size, y*size, size, size, 
                         random_color_array[y*cols+x]);
             }
         }

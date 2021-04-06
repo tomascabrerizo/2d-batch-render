@@ -6,11 +6,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-Colorf to_colorf(Color color)
-{
-    return {color.r/255.0f, color.g/255.0f, color.b/255.0f, color.a/255.0f};
-}
-
 uint32_t shader_create_program(const char* vert_path, const char* frag_path)
 {
     int success;
@@ -119,4 +114,10 @@ void Renderer::draw_rect(Rect rect, Color color)
     Rect_Split triangles = rect.split();
     draw_triangle(triangles.lower, color);
     draw_triangle(triangles.upper, color);
+}
+
+void Renderer::draw_rect(int x, int y, int width, int height, Color color)
+{
+    Rect rect = {{(float)x, (float)y}, {(float)width, (float)height}};
+    draw_rect(rect, color);
 }

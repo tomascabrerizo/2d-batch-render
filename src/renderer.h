@@ -4,25 +4,7 @@
 #include <stdint.h>
 #include "shapes.h"
 #include "math.h"
-
-struct Color
-{
-    uint32_t r;
-    uint32_t g;
-    uint32_t b;
-    uint32_t a;
-};
-
-struct Colorf 
-{
-    float r;
-    float g;
-    float b;
-    float a;
-
-};
-
-Colorf to_colorf(Color color);
+#include "color.h"
 
 #define MAX_RENDERER_CAPACITY (10000)
 struct Renderer
@@ -42,6 +24,7 @@ struct Renderer
     
     void draw_triangle(Triangle triangle, Color color);
     void draw_rect(Rect rect, Color color);
+    void draw_rect(int x, int y, int width, int height, Color color);
 };
 
 uint32_t shader_create_program(const char* vert_path, const char* frag_path);
