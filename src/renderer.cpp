@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include <assert.h>
 
+Colorf to_colorf(Color color)
+{
+    return {color.r/255.0f, color.g/255.0f, color.b/255.0f, color.a/255.0f};
+}
 
 uint32_t shader_create_program(const char* vert_path, const char* frag_path)
 {
@@ -50,12 +54,9 @@ uint32_t shader_create_program(const char* vert_path, const char* frag_path)
 
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader); 
-    
-    printf("SHADER: VERTEX(%s) FRAGMENT(%s) Loaded\n", vert_path, frag_path);
 
     return shader_program;
 }
-
 
 Renderer::Renderer()
 {
@@ -65,9 +66,16 @@ Renderer::Renderer()
     glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), buffer, GL_DYNAMIC_DRAW);
-    location = glGetAttribLocation(program, "vertex");
+    uint32_t location = glGetAttribLocation(program, "vertex");
     glVertexAttribPointer(location, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(location);
+    
+    glGenBuffers(1, &color_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color_array), color_array, GL_DYNAMIC_DRAW);
+    uint32_t color_location = glGetAttribLocation(program, "color_array");
+    glVertexAttribPointer(color_location, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(color_location);
 }
 
 void Renderer::init(int width, int height)
@@ -90,18 +98,25 @@ void Renderer::end()
     glUseProgram(program);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Triangle)*buffer_index, buffer);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Colorf)*buffer_index*3, color_array);
+    
     glDrawArrays(GL_TRIANGLES, 0, buffer_index*3); 
 }
 
-void Renderer::draw_triangle(Triangle triangle)
+void Renderer::draw_triangle(Triangle triangle, Color color)
 {
     buffer[buffer_index]= triangle;
+    color_array[buffer_index*3+0] = to_colorf(color);
+    color_array[buffer_index*3+1] = to_colorf(color);
+    color_array[buffer_index*3+2] = to_colorf(color);
     buffer_index++;
 }
 
-void Renderer::draw_rect(Rect rect)
+void Renderer::draw_rect(Rect rect, Color color)
 {
     Rect_Split triangles = rect.split();
-    draw_triangle(triangles.lower);
-    draw_triangle(triangles.upper);
+    draw_triangle(triangles.lower, color);
+    draw_triangle(triangles.upper, color);
 }

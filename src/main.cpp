@@ -8,6 +8,12 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
+const Color YELLOW = {255, 255, 0,   255}; 
+const Color BLUE   = {0,   0,   255, 255};
+const Color GREEN  = {0,   255, 0,   255};
+const Color WHITE  = {255, 255, 255, 255};
+const Color RED    = {255, 0,   0,   255};
+
 int main(int argc, char** argv)
 {
     (void)argc;
@@ -21,7 +27,7 @@ int main(int argc, char** argv)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GLContext context = SDL_GL_CreateContext(window);
     (void)context;
-    SDL_GL_SetSwapInterval(true); 
+    SDL_GL_SetSwapInterval(0); 
     
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
         printf("Failed to initialize GLAD\n");
@@ -35,8 +41,21 @@ int main(int argc, char** argv)
     
     Renderer renderer = {};
     renderer.init(WINDOW_WIDTH, WINDOW_HEIGHT);
-    
-    Triangle t0 = Triangle(V2( 200.0f, 200.0f), V2( 300.0f, 400.0f), V2(400.0f, 200.0f));
+   
+    //Random color array
+    const int size = 10;
+    const int cols = WINDOW_WIDTH / size;
+    const int rows = WINDOW_HEIGHT / size;
+    Color random_color_array [cols*rows];
+    for(int i = 0; i < rows*cols; ++i)
+    {
+        random_color_array[i] = {(uint32_t)rand()%255, 
+            (uint32_t)rand()%255,
+            (uint32_t)rand()%255,
+            (uint32_t)255
+        };
+    }
+
 
     bool quit = false;
     while(!quit)
@@ -56,10 +75,15 @@ int main(int argc, char** argv)
         glClear(GL_COLOR_BUFFER_BIT);
         renderer.begin();
         
-        renderer.draw_triangle(t0);
-        renderer.draw_rect(Rect({10.0f, 10.0f}, {50.0f, 50.0f}));
-        renderer.draw_rect(Rect({100.0f, 10.0f}, {50.0f, 50.0f}));
-
+        for(int y = 0; y < rows; ++y)
+        {
+            for(int x = 0; x < cols; ++x)
+            {
+                renderer.draw_rect({V2(x*size, y*size), V2(size, size)}, 
+                        random_color_array[y*cols+x]);
+            }
+        }
+        
         renderer.end(); 
         SDL_GL_SwapWindow(window);
     }
