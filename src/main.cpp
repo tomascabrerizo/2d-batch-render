@@ -62,12 +62,23 @@ int main(int argc, char** argv)
     ta.load_image("./res/heightmap.bmp");
     ta.load_image("./res/woodbox.bmp");
     ta.load_image("./res/luffy.bmp");
-    ta.load_image("./res/grass.bmp");
     Image ta_image = ta.generate();
-    ta.free_images();
     Image::save_bmp(ta_image, "./res/texture_atlas.bmp");
-    printf("width: %d, height: %d\n", ta_image.width, ta_image.height);
-
+    //Text Texture Coordinates
+    for(uint32_t i = 0; i < ta.array_index; ++i)
+    {
+        Texture_Coord coord = ta.coords_array[i];
+        printf("Image: %d\n", i);
+        printf("upper_left:  {%f, %f}\n", coord.upper_left.x, coord.upper_left.y);
+        printf("lower_left:  {%f, %f}\n", coord.lower_left.x, coord.lower_left.y);
+        printf("upper_right: {%f, %f}\n", coord.upper_right.x, coord.upper_right.y);
+        printf("lower_right: {%f, %f}\n", coord.lower_right.x, coord.lower_right.y);
+        printf("-------------------------\n\n");
+    }
+    //TODO: this free_images reset ta.array_index to cero
+    ta.free_images();
+    Image::free(ta_image);
+	
     bool quit = false;
     while(!quit)
     {

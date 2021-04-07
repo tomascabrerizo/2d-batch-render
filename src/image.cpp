@@ -1,6 +1,7 @@
 #include "image.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <SDL2/SDL.h>
 
 Image Image::load_bmp(const char* filepath)
@@ -35,7 +36,14 @@ void Image::save_bmp(Image image, const char* filepath)
             0x000000FF, 
             0xFF000000
     );
-    SDL_SaveBMP(sdl_image, filepath);
+    if(SDL_SaveBMP(sdl_image, filepath) != 0)
+    {
+        printf("SDL_SaveBMP failed: %s\n", SDL_GetError());
+    }
+    else
+    {
+        printf("Image saved: '%s'\n", filepath);
+    }
     SDL_FreeSurface(sdl_image);
 }
 

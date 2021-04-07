@@ -9,6 +9,7 @@ struct Texture
     int width;
     int height;
     
+
     static Texture load(const char* filepath); 
 };
 

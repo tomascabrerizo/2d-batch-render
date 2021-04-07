@@ -13,6 +13,28 @@ void Texture_Atlas::load_image(const char* filepath)
 
 Image Texture_Atlas::generate()
 {
+    //NOTE: Generate texture coordinates
+    //TODO: Move this loop to the lower loop
+    uint32_t current_height = 0;
+    for(uint32_t i = 0; i < array_index; ++i)
+    {
+        Image image = image_array[i];
+        Texture_Coord* coord = &coords_array[i];
+        
+        float right_x = (float)image.width / (float)width; 
+        float upper_y = (float)current_height / (float)height;
+        float bottom_y = (float)(image.height+current_height) / (float)height;
+        
+        coord->upper_left  = V2(0.0f, upper_y);
+        coord->upper_right = V2(right_x, upper_y);
+        coord->lower_left  = V2(0.0f, bottom_y);
+        coord->lower_right = V2(right_x, bottom_y);
+        
+        //TODO: Maybe += image.height - 1; ?
+        current_height += image.height;
+    }
+
+    //NOTE: Generate texture image
     Image atlas_image = {};
     atlas_image.width = width;
     atlas_image.height = height;
