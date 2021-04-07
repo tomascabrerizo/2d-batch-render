@@ -57,7 +57,7 @@ Renderer::Renderer()
 {
     program = shader_create_program("./shaders/shader.vert", "./shaders/shader.frag");
     array_index = 0;
-    
+
     glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_array), vertex_array, GL_DYNAMIC_DRAW);
@@ -71,9 +71,17 @@ Renderer::Renderer()
     uint32_t color_location = glGetAttribLocation(program, "color_array");
     glVertexAttribPointer(color_location, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(color_location);
+    
+    glGenBuffers(1, &coord_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, coord_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(coord_array), coord_array, GL_DYNAMIC_DRAW);
+    uint32_t coord_location = glGetAttribLocation(program, "coord_array");
+    glVertexAttribPointer(coord_location, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(coord_location);
+    
 }
 
-void Renderer::init(int width, int height)
+void Renderer::init(int width, int height, Image* ta)
 {
     //TODO: make this transfomation with a mat2
     glUseProgram(program);
@@ -81,6 +89,10 @@ void Renderer::init(int width, int height)
     uint32_t u_height = glGetUniformLocation(program, "height");
     glUniform1f(u_width, (float)width);
     glUniform1f(u_height, (float)height);
+
+    if(ta) texture_atlas = Texture::load(*ta);
+    uint32_t texture_location = glGetUniformLocation(program, "texture_atlas");
+    glUniform1i(texture_location , 0); 
 }
 
 void Renderer::begin()
@@ -97,6 +109,12 @@ void Renderer::end()
     glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Colorf)*array_index*3, color_array);
     
+    glBindBuffer(GL_ARRAY_BUFFER, coord_buffer);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Texture_Coord)*array_index, coord_array);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture_atlas.id);
+    
     glDrawArrays(GL_TRIANGLES, 0, array_index*3); 
 }
 
@@ -106,6 +124,18 @@ void Renderer::draw_triangle(Triangle triangle, Color color)
     color_array[array_index*3+0] = to_colorf(color);
     color_array[array_index*3+1] = to_colorf(color);
     color_array[array_index*3+2] = to_colorf(color);
+    coord_array[array_index] = Texture_Coord::INVALID();
+    array_index++;
+}
+
+
+void Renderer::draw_triangle(Triangle triangle, Texture_Coord coord)
+{
+    vertex_array[array_index] = triangle;
+    color_array[array_index*3+0] = Colorf::INVALID();
+    color_array[array_index*3+1] = Colorf::INVALID();
+    color_array[array_index*3+2] = Colorf::INVALID();
+    coord_array[array_index] = coord;
     array_index++;
 }
 
@@ -120,4 +150,13 @@ void Renderer::draw_rect(int x, int y, int width, int height, Color color)
 {
     Rect rect = {{(float)x, (float)y}, {(float)width, (float)height}};
     draw_rect(rect, color);
+}
+
+
+void Renderer::draw_rect(int x, int y, int width, int height, Rect_Coord coords)
+{
+    Rect rect = {{(float)x, (float)y}, {(float)width, (float)height}};
+    Rect_Split triangles = rect.split();
+    draw_triangle(triangles.lower, coords.lower_coords);
+    draw_triangle(triangles.upper, coords.upper_coords);
 }

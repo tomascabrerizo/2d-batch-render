@@ -2,43 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
 
 void Texture_Atlas::load_image(const char* filepath)
 {
+    assert(array_index < MAX_IMAGE_CAPACITY);
     Image image = Image::load_bmp(filepath);
     height += image.height;
     if((uint32_t)image.width > width) width = image.width;
     image_array[array_index++] = image; 
 }
 
-Image Texture_Atlas::generate()
+Image Texture_Atlas::generate_image()
 {
-    //NOTE: Generate texture coordinates
-    uint32_t current_height = 0;
-    for(uint32_t i = 0; i < array_index; ++i)
-    {
-        Image image = image_array[i];
-        Texture_Coord* upper_triangle = &coords_array[i*2+0];
-        Texture_Coord* lower_triangle = &coords_array[i*2+1];
-        
-        float right_x = (float)image.width / (float)width; 
-        float upper_y = (float)current_height / (float)height;
-        float bottom_y = (float)(image.height+current_height) / (float)height;
-        
-        //NOTE Upper triangle
-        upper_triangle->v0 = V2(0.0f, upper_y);
-        upper_triangle->v1 = V2(right_x, upper_y);
-        upper_triangle->v2 = V2(right_x, bottom_y);
-        //NOTE: Lowe triangle
-        lower_triangle->v0 = V2(0.0f, upper_y);
-        lower_triangle->v1 = V2(0.0f, bottom_y);
-        lower_triangle->v2 = V2(right_x, bottom_y);
-
-        //TODO: Maybe += image.height - 1; ?
-        current_height += image.height;
-        coords_count += 2;
-    }
-
+    assert(array_index < MAX_IMAGE_CAPACITY);
     //NOTE: Generate texture image
     Image atlas_image = {};
     atlas_image.width = width;
@@ -60,6 +37,40 @@ Image Texture_Atlas::generate()
         }
     }
     return atlas_image;
+}
+
+Coord_Array Texture_Atlas::generate_coords()
+{
+    assert(array_index < MAX_IMAGE_CAPACITY);
+    
+    Coord_Array result;
+    result.index = array_index;
+
+    uint32_t current_height = 0;
+    for(uint32_t i = 0; i < array_index; ++i)
+    {
+        //NOTE: Generate texture coordinates
+        Image image = image_array[i];
+        Texture_Coord* upper_triangle = &result.texture[i].upper_coords;
+        Texture_Coord* lower_triangle = &result.texture[i].lower_coords;
+        
+        float right_x = (float)image.width / (float)width; 
+        float upper_y = (float)current_height / (float)height;
+        float bottom_y = (float)(image.height+current_height) / (float)height;
+        
+        //NOTE Upper triangle
+        upper_triangle->v0 = V2(0.0f, upper_y);
+        upper_triangle->v1 = V2(right_x, bottom_y);
+        upper_triangle->v2 = V2(right_x, upper_y);
+        //NOTE: Lowe triangle
+        lower_triangle->v0 = V2(0.0f, upper_y);
+        lower_triangle->v1 = V2(0.0f, bottom_y);
+        lower_triangle->v2 = V2(right_x, bottom_y);
+
+        //TODO: Maybe += image.height - 1; ?
+        current_height += image.height;
+    }
+    return result;
 }
 
 void Texture_Atlas::free_images()

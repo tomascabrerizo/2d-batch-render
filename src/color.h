@@ -17,7 +17,8 @@ struct Colorf
     float g;
     float b;
     float a;
-
+    
+    static Colorf INVALID();
 };
 
 Colorf to_colorf(Color color);

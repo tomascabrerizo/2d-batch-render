@@ -39,10 +39,21 @@ int main(int argc, char** argv)
     //TODO: Maybe disable face culling
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    
-    Renderer renderer = {};
-    renderer.init(WINDOW_WIDTH, WINDOW_HEIGHT);
    
+    Texture_Atlas ta = {};
+    ta.load_image("./res/heightmap.bmp");
+    ta.load_image("./res/woodbox.bmp");
+    ta.load_image("./res/luffy.bmp");
+    Image ta_image = ta.generate_image();
+    const Coord_Array ta_cood = ta.generate_coords(); 
+
+    Renderer renderer = {};
+    renderer.init(WINDOW_WIDTH, WINDOW_HEIGHT, &ta_image);
+
+    Image::save_bmp(ta_image, "./res/texture_atlas.bmp");  
+    Image::free(ta_image);
+    ta.free_images();
+    
     //Random color array
     const int size = 10;
     const int cols = WINDOW_WIDTH / size;
@@ -57,17 +68,6 @@ int main(int argc, char** argv)
         };
     }
 
-    //Texture atlas test
-    Texture_Atlas ta = {};
-    ta.load_image("./res/heightmap.bmp");
-    ta.load_image("./res/woodbox.bmp");
-    ta.load_image("./res/luffy.bmp");
-    Image ta_image = ta.generate();
-    Image::save_bmp(ta_image, "./res/texture_atlas.bmp");
-    //TODO: this free_images reset ta.array_index to cero
-    ta.free_images();
-    Image::free(ta_image);
-	
     bool quit = false;
     while(!quit)
     {
@@ -86,14 +86,22 @@ int main(int argc, char** argv)
         glClear(GL_COLOR_BUFFER_BIT);
         renderer.begin();
         
-        for(int y = 0; y < rows; ++y)
+        //Test scope
         {
-            for(int x = 0; x < cols; ++x)
+            const int size = 10;
+            const int cols = WINDOW_WIDTH / size;
+            const int rows = WINDOW_HEIGHT / size;
+            for(int y = 0; y < rows; ++y)
             {
-                renderer.draw_rect(x*size, y*size, size, size, 
-                        random_color_array[y*cols+x]);
+                for(int x = 0; x < cols; ++x)
+                {
+                    renderer.draw_rect(x*size, y*size, size, size, random_color_array[y*cols+x]);
+                }
             }
         }
+        renderer.draw_rect(50, 50, 100, 100, ta_cood.texture[0]);
+        renderer.draw_rect(160, 50, 100, 100, ta_cood.texture[1]);
+        renderer.draw_rect(270, 50, 100, 100, ta_cood.texture[2]);
         
         renderer.end(); 
         SDL_GL_SwapWindow(window);

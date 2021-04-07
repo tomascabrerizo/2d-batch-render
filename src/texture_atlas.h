@@ -3,31 +3,29 @@
 
 #include <stdint.h>
 #include "image.h"
-#include "texture.h"
 #include "math.h"
-
-struct Texture_Coord 
-{
-    //NOTE: u and v texture coordinates between 0 and 1
-    V2 v0;
-    V2 v1;
-    V2 v2;
-};
+#include "texture.h"
 
 #define MAX_IMAGE_CAPACITY (1024)
+
+struct Coord_Array 
+{
+    Rect_Coord texture[MAX_IMAGE_CAPACITY];
+    uint32_t index;
+};
+
 struct Texture_Atlas
 {
     Image image_array[MAX_IMAGE_CAPACITY];
-    Texture_Coord coords_array[MAX_IMAGE_CAPACITY*2];
     uint32_t array_index = 0;
-    uint32_t coords_count = 0;
 
     uint32_t height = 0;
     uint32_t width = 0;
 
     void load_image(const char* filepath);
     //TODO: Need to generate texture coordinates for renderer
-    Image generate();
+    Image generate_image();
+    Coord_Array generate_coords();
     void free_images();
 };
 
