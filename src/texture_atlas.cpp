@@ -14,24 +14,29 @@ void Texture_Atlas::load_image(const char* filepath)
 Image Texture_Atlas::generate()
 {
     //NOTE: Generate texture coordinates
-    //TODO: Move this loop to the lower loop
     uint32_t current_height = 0;
     for(uint32_t i = 0; i < array_index; ++i)
     {
         Image image = image_array[i];
-        Texture_Coord* coord = &coords_array[i];
+        Texture_Coord* upper_triangle = &coords_array[i*2+0];
+        Texture_Coord* lower_triangle = &coords_array[i*2+1];
         
         float right_x = (float)image.width / (float)width; 
         float upper_y = (float)current_height / (float)height;
         float bottom_y = (float)(image.height+current_height) / (float)height;
         
-        coord->upper_left  = V2(0.0f, upper_y);
-        coord->upper_right = V2(right_x, upper_y);
-        coord->lower_left  = V2(0.0f, bottom_y);
-        coord->lower_right = V2(right_x, bottom_y);
-        
+        //NOTE Upper triangle
+        upper_triangle->v0 = V2(0.0f, upper_y);
+        upper_triangle->v1 = V2(right_x, upper_y);
+        upper_triangle->v2 = V2(right_x, bottom_y);
+        //NOTE: Lowe triangle
+        lower_triangle->v0 = V2(0.0f, upper_y);
+        lower_triangle->v1 = V2(0.0f, bottom_y);
+        lower_triangle->v2 = V2(right_x, bottom_y);
+
         //TODO: Maybe += image.height - 1; ?
         current_height += image.height;
+        coords_count += 2;
     }
 
     //NOTE: Generate texture image

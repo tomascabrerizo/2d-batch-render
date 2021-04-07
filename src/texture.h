@@ -2,6 +2,7 @@
 #define TEXTURE_H
 
 #include <stdint.h>
+#include "image.h"
 
 struct Texture
 {
@@ -11,6 +12,7 @@ struct Texture
     
 
     static Texture load(const char* filepath); 
+    static Texture load(Image image); 
 };
 
 #endif //TEXTURE_H

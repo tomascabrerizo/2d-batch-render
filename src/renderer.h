@@ -5,12 +5,14 @@
 #include "shapes.h"
 #include "math.h"
 #include "color.h"
+#include "texture_atlas.h"
 
 #define MAX_RENDERER_CAPACITY (10000)
 struct Renderer
 {
     Triangle vertex_array[MAX_RENDERER_CAPACITY];
     Colorf color_array[MAX_RENDERER_CAPACITY*3];
+    Texture_Coord coord_array[MAX_RENDERER_CAPACITY];
     //TODO: ADD texture coordinates array
     uint32_t array_index;
 

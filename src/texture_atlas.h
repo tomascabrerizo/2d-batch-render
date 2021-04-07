@@ -9,18 +9,18 @@
 struct Texture_Coord 
 {
     //NOTE: u and v texture coordinates between 0 and 1
-    V2 lower_left;
-    V2 lower_right;
-    V2 upper_left;
-    V2 upper_right;
+    V2 v0;
+    V2 v1;
+    V2 v2;
 };
 
 #define MAX_IMAGE_CAPACITY (1024)
 struct Texture_Atlas
 {
     Image image_array[MAX_IMAGE_CAPACITY];
-    Texture_Coord coords_array[MAX_IMAGE_CAPACITY];
+    Texture_Coord coords_array[MAX_IMAGE_CAPACITY*2];
     uint32_t array_index = 0;
+    uint32_t coords_count = 0;
 
     uint32_t height = 0;
     uint32_t width = 0;
