@@ -9,8 +9,7 @@ void main()
 {
     if(color.r == -1)
     {
-        gl_FragColor.rgb = texture2D(texture_atlas, tex_coord).rgb; 
-        gl_FragColor.a = 1.0;
+        gl_FragColor = texture2D(texture_atlas, tex_coord); 
     }
     else
     {
