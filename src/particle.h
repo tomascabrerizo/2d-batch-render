@@ -11,10 +11,11 @@ struct Particle
     V2 vel;
     V2 size;
     Color color; 
-    //TODO: Add lifetime to each particle
+    float life_time;
     
     void update(float dt); 
     void draw(Renderer* renderer);
+
 };
 
 #endif //PARTICLE_H

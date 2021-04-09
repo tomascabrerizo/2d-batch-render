@@ -77,21 +77,23 @@ int main(int argc, char** argv)
         uint32_t mouse_lbutton_down = SDL_BUTTON(SDL_BUTTON_LEFT) & button_mask;
         if(mouse_lbutton_down && particle_index < max_particles)
         {
-            for(int i = 0; i < 10; ++i)
+            for(int i = 0; i < 20; ++i)
             {
                 Particle particle;
                 particle.pos = V2(mouse_x, mouse_y);
-                particle.size = V2(5, 5);
+                particle.size = V2(4, 4);
                 particle.color = Color::RANDOM();
-                particle.vel = rand_v2(V2(-50, -50), V2(50, 50));
+                particle.vel = rand_v2(V2(-40, -40), V2(40, 40));
+                particle.life_time = rand_float(0, 2);
                 particles[particle_index++] = particle;
+                particle_index = particle_index%max_particles;
             } 
         }
 
         glClear(GL_COLOR_BUFFER_BIT);
         renderer.begin();
         
-        for(int i = 0; i < particle_index; ++i)
+        for(int i = 0; i < max_particles; ++i)
         {
             particles[i].update(0.016f);
             particles[i].draw(&renderer);

@@ -3,11 +3,16 @@
 
 void Particle::update(float dt)
 {
-    pos += vel * dt;
+    if(life_time > 0.0f)
+    {
+        pos += vel * dt;
+        life_time -= dt;
+    }
 }
 
 void Particle::draw(Renderer* renderer)
 {
-    renderer->draw_rect(pos.x, pos.y, size.x, size.y, color);
+    if(life_time > 0.0f)
+        renderer->draw_rect(pos.x, pos.y, size.x, size.y, color);
 }
 
