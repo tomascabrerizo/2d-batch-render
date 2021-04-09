@@ -134,6 +134,11 @@ void Renderer::draw_triangle(Triangle triangle, Color color)
     array_index++;
 }
 
+void Renderer::draw_triangle(V2 pos, V2 size, Color color)
+{
+    Triangle triangle = {pos, pos+V2(0, size.y), pos+size};
+    draw_triangle(triangle, color); 
+}
 
 void Renderer::draw_triangle(Triangle triangle, Texture_Coord coord)
 {

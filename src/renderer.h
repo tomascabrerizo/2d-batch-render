@@ -10,6 +10,7 @@
 #define MAX_RENDERER_CAPACITY (10000)
 struct Renderer
 {
+    //TODO: Add more batchs to the renderer
     Triangle vertex_array[MAX_RENDERER_CAPACITY];
     Colorf color_array[MAX_RENDERER_CAPACITY*3];
     Texture_Coord coord_array[MAX_RENDERER_CAPACITY];
@@ -30,6 +31,7 @@ struct Renderer
     
     void draw_triangle(Triangle triangle, Color color);
     void draw_triangle(Triangle triangle, Texture_Coord coord);
+    void draw_triangle(V2 pos, V2 size, Color color);
     void draw_rect(Rect rect, Color color);
     void draw_rect(int x, int y, int width, int height, Color color);
     void draw_rect(int x, int y, int width, int height, uint32_t texture);

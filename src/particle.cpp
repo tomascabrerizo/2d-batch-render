@@ -13,6 +13,8 @@ void Particle::update(float dt)
 void Particle::draw(Renderer* renderer)
 {
     if(life_time > 0.0f)
-        renderer->draw_rect(pos.x, pos.y, size.x, size.y, color);
+    {
+        renderer->draw_triangle(pos, size, color);
+    }
 }
 
