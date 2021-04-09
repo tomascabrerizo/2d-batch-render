@@ -22,8 +22,7 @@ struct Texture_Atlas
     uint32_t height = 0;
     uint32_t width = 0;
 
-    void load_image(const char* filepath);
-    //TODO: Need to generate texture coordinates for renderer
+    uint32_t load_image(const char* filepath);
     Image generate_image();
     Coord_Array generate_coords();
     void free_images();

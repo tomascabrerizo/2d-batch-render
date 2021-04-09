@@ -81,7 +81,7 @@ Renderer::Renderer()
     
 }
 
-void Renderer::init(int width, int height, Image* ta)
+void Renderer::init(int width, int height, Texture_Atlas* ta = 0)
 {
     //TODO: make this transfomation with a mat2
     glUseProgram(program);
@@ -90,7 +90,13 @@ void Renderer::init(int width, int height, Image* ta)
     glUniform1f(u_width, (float)width);
     glUniform1f(u_height, (float)height);
 
-    if(ta) texture_atlas = Texture::load(*ta);
+    if(ta) 
+    {
+        Image texture_atlas_image = ta->generate_image();
+        texture_atlas_texture = Texture::load(texture_atlas_image);
+        Image::free(texture_atlas_image);
+        texture_atlas_coord = ta->generate_coords();
+    }
     uint32_t texture_location = glGetUniformLocation(program, "texture_atlas");
     glUniform1i(texture_location , 0); 
 }
@@ -113,7 +119,7 @@ void Renderer::end()
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Texture_Coord)*array_index, coord_array);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture_atlas.id);
+    glBindTexture(GL_TEXTURE_2D, texture_atlas_texture.id);
     
     glDrawArrays(GL_TRIANGLES, 0, array_index*3); 
 }
@@ -153,10 +159,10 @@ void Renderer::draw_rect(int x, int y, int width, int height, Color color)
 }
 
 
-void Renderer::draw_rect(int x, int y, int width, int height, Rect_Coord coords)
+void Renderer::draw_rect(int x, int y, int width, int height, uint32_t texture)
 {
     Rect rect = {{(float)x, (float)y}, {(float)width, (float)height}};
     Rect_Split triangles = rect.split();
-    draw_triangle(triangles.lower, coords.lower_coords);
-    draw_triangle(triangles.upper, coords.upper_coords);
+    draw_triangle(triangles.lower, texture_atlas_coord.texture[texture].lower_coords);
+    draw_triangle(triangles.upper, texture_atlas_coord.texture[texture].upper_coords);
 }

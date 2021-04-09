@@ -9,6 +9,8 @@ struct Color
     uint32_t g;
     uint32_t b;
     uint32_t a;
+
+    static Color RANDOM();
 };
 
 struct Colorf 
@@ -22,5 +24,11 @@ struct Colorf
 };
 
 Colorf to_colorf(Color color);
+
+const Color YELLOW = {255, 255, 0,   255}; 
+const Color BLUE   = {0,   0,   255, 255};
+const Color GREEN  = {0,   255, 0,   255};
+const Color WHITE  = {255, 255, 255, 255};
+const Color RED    = {255, 0,   0,   255};
 
 #endif //COLOR_H

@@ -1,4 +1,10 @@
 #include "color.h"
+#include "stdlib.h"
+
+Color Color::RANDOM()
+{
+    return {rand()%255u, rand()%255u, rand()%255u, 255u};
+}
 
 Colorf to_colorf(Color color)
 {

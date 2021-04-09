@@ -5,15 +5,10 @@
 
 #include "renderer.h"
 #include "texture_atlas.h"
+#include "particle.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
-
-const Color YELLOW = {255, 255, 0,   255}; 
-const Color BLUE   = {0,   0,   255, 255};
-const Color GREEN  = {0,   255, 0,   255};
-const Color WHITE  = {255, 255, 255, 255};
-const Color RED    = {255, 0,   0,   255};
 
 int main(int argc, char** argv)
 {
@@ -28,7 +23,7 @@ int main(int argc, char** argv)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GLContext context = SDL_GL_CreateContext(window);
     (void)context;
-    SDL_GL_SetSwapInterval(0); 
+    SDL_GL_SetSwapInterval(true); 
     
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
         printf("Failed to initialize GLAD\n");
@@ -39,34 +34,26 @@ int main(int argc, char** argv)
     //TODO: Maybe disable face culling
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-   
+    
+    //NOTE: Init Texture Atlas 
     Texture_Atlas ta = {};
-    ta.load_image("./res/heightmap.bmp");
-    ta.load_image("./res/woodbox.bmp");
-    ta.load_image("./res/luffy.bmp");
-    Image ta_image = ta.generate_image();
-    const Coord_Array ta_cood = ta.generate_coords(); 
-
+    uint32_t luffy_texture = ta.load_image("./res/luffy.bmp");
+    uint32_t woodbox_texture = ta.load_image("./res/woodbox.bmp");
+    uint32_t heightmap_texture = ta.load_image("./res/heightmap.bmp");
+    //NOTE: Not using texture at this moment
+    (void)luffy_texture;
+    (void)woodbox_texture;
+    (void)heightmap_texture;
+    //NOTE: Init Renderer
     Renderer renderer = {};
-    renderer.init(WINDOW_WIDTH, WINDOW_HEIGHT, &ta_image);
-
-    Image::save_bmp(ta_image, "./res/texture_atlas.bmp");  
-    Image::free(ta_image);
+    renderer.init(WINDOW_WIDTH, WINDOW_HEIGHT, &ta);
+    //NOTE: Free texture atlas images
     ta.free_images();
     
-    //Random color array
-    const int size = 10;
-    const int cols = WINDOW_WIDTH / size;
-    const int rows = WINDOW_HEIGHT / size;
-    Color random_color_array [cols*rows];
-    for(int i = 0; i < rows*cols; ++i)
-    {
-        random_color_array[i] = {(uint32_t)rand()%255, 
-            (uint32_t)rand()%255,
-            (uint32_t)rand()%255,
-            (uint32_t)255
-        };
-    }
+    //NOTE: Particle System test 
+    const int max_particles = 4000;
+    Particle particles[max_particles];
+    int particle_index = 0;
 
     bool quit = false;
     while(!quit)
@@ -82,27 +69,34 @@ int main(int argc, char** argv)
                 }break;
             }
         }
+
+
+        int mouse_x, mouse_y; 
+        uint32_t button_mask = SDL_GetMouseState(&mouse_x, &mouse_y);
         
+        uint32_t mouse_lbutton_down = SDL_BUTTON(SDL_BUTTON_LEFT) & button_mask;
+        if(mouse_lbutton_down && particle_index < max_particles)
+        {
+            for(int i = 0; i < 10; ++i)
+            {
+                Particle particle;
+                particle.pos = V2(mouse_x, mouse_y);
+                particle.size = V2(5, 5);
+                particle.color = Color::RANDOM();
+                particle.vel = rand_v2(V2(-50, -50), V2(50, 50));
+                particles[particle_index++] = particle;
+            } 
+        }
+
         glClear(GL_COLOR_BUFFER_BIT);
         renderer.begin();
         
-        //Test scope
+        for(int i = 0; i < particle_index; ++i)
         {
-            const int size = 10;
-            const int cols = WINDOW_WIDTH / size;
-            const int rows = WINDOW_HEIGHT / size;
-            for(int y = 0; y < rows; ++y)
-            {
-                for(int x = 0; x < cols; ++x)
-                {
-                    renderer.draw_rect(x*size, y*size, size, size, random_color_array[y*cols+x]);
-                }
-            }
+            particles[i].update(0.016f);
+            particles[i].draw(&renderer);
         }
-        renderer.draw_rect(50, 50, 100, 100, ta_cood.texture[0]);
-        renderer.draw_rect(160, 50, 100, 100, ta_cood.texture[1]);
-        renderer.draw_rect(270, 50, 100, 100, ta_cood.texture[2]);
-        
+
         renderer.end(); 
         SDL_GL_SwapWindow(window);
     }

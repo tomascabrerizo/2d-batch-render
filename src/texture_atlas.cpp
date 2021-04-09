@@ -4,13 +4,15 @@
 #include <stdio.h>
 #include <assert.h>
 
-void Texture_Atlas::load_image(const char* filepath)
+uint32_t Texture_Atlas::load_image(const char* filepath)
 {
     assert(array_index < MAX_IMAGE_CAPACITY);
+    int current_index = array_index;
     Image image = Image::load_bmp(filepath);
     height += image.height;
     if((uint32_t)image.width > width) width = image.width;
     image_array[array_index++] = image; 
+    return current_index;
 }
 
 Image Texture_Atlas::generate_image()
@@ -38,6 +40,7 @@ Image Texture_Atlas::generate_image()
     }
     return atlas_image;
 }
+
 
 Coord_Array Texture_Atlas::generate_coords()
 {

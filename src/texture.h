@@ -21,6 +21,7 @@ struct Rect_Coord
     Texture_Coord lower_coords;
 };
 
+
 struct Texture
 {
     uint32_t id;
