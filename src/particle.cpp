@@ -14,7 +14,7 @@ void Particle::draw(Renderer* renderer)
 {
     if(life_time > 0.0f)
     {
-        renderer->draw_triangle(pos, size, color);
+        renderer->draw_triangle(pos, size, angle, color);
     }
 }
 

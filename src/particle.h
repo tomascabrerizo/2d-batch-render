@@ -11,6 +11,8 @@ struct Particle
     V2 vel;
     V2 size;
     Color color; 
+    float angle;
+    
     float life_time;
     
     void update(float dt); 

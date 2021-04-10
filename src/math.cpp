@@ -4,6 +4,11 @@
 #include <math.h>
 #include <time.h>
 
+float float_to_rad(float angle)
+{
+    return angle = angle * PI / 180;
+}
+
 float float_inverse(float num)
 {
     return 1.0f / num;
@@ -94,6 +99,15 @@ V2 v2_normailize(V2 v)
 {
     float l = v2_length(v);
     return V2(v.x/l, v.y/l);
+}
+
+V2 v2_rotate(V2 v, float angle)
+{
+    float r_angle = float_to_rad(angle);
+    V2 result = {};
+    result.x = cosf(r_angle)*v.x - sinf(r_angle)*v.y;
+    result.y = sinf(r_angle)*v.x + cosf(r_angle)*v.y;
+    return result;
 }
 
 M2 m2_ortho(float left, float rigth, float top, float bottom)

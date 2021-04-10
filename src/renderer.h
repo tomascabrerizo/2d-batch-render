@@ -31,7 +31,7 @@ struct Renderer
     
     void draw_triangle(Triangle triangle, Color color);
     void draw_triangle(Triangle triangle, Texture_Coord coord);
-    void draw_triangle(V2 pos, V2 size, Color color);
+    void draw_triangle(V2 pos, V2 size, float angle, Color color);
     void draw_rect(Rect rect, Color color);
     void draw_rect(int x, int y, int width, int height, Color color);
     void draw_rect(int x, int y, int width, int height, uint32_t texture);

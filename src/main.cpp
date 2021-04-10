@@ -73,7 +73,6 @@ int main(int argc, char** argv)
 
         int mouse_x, mouse_y; 
         uint32_t button_mask = SDL_GetMouseState(&mouse_x, &mouse_y);
-        
         uint32_t mouse_lbutton_down = SDL_BUTTON(SDL_BUTTON_LEFT) & button_mask;
         if(mouse_lbutton_down && particle_index < max_particles)
         {
@@ -83,8 +82,9 @@ int main(int argc, char** argv)
                 particle.pos = V2(mouse_x, mouse_y);
                 particle.size = V2(8, 8);
                 particle.color = Color::RANDOM();
-                particle.vel = rand_v2(V2(-40, -40), V2(40, 40));
+                particle.vel = rand_v2(V2(-60, -60), V2(60, 60));
                 particle.life_time = rand_float(0, 3);
+                particle.angle = rand_int(0, 360);
                 particles[particle_index++] = particle;
                 particle_index = particle_index%max_particles;
             } 

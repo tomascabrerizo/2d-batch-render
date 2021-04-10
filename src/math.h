@@ -1,6 +1,8 @@
 #ifndef MATH_H
 #define MATH_H
 
+#define PI 3.1415926f
+
 struct V2 
 {
     float x;
@@ -9,6 +11,8 @@ struct V2
     V2(): x(0), y(0) {}
     V2(float x, float y): x(x), y(y) {}
 };
+
+float float_to_rad(float angle);
 
 float float_inverse(float num);
 int rand_int(int min, int max);
@@ -30,6 +34,7 @@ V2 v2_perp(V2 v);
 float v2_length_sqrt(V2 v);
 float v2_length(V2 v);
 V2 v2_normailize(V2 v);
+V2 v2_rotate(V2 v, float angle);
 
 struct M2
 {

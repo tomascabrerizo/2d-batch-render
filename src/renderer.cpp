@@ -134,9 +134,14 @@ void Renderer::draw_triangle(Triangle triangle, Color color)
     array_index++;
 }
 
-void Renderer::draw_triangle(V2 pos, V2 size, Color color)
+void Renderer::draw_triangle(V2 pos, V2 size, float angle, Color color)
 {
-    Triangle triangle = {pos, pos+V2(0, size.y), pos+size};
+    (void)angle;
+    V2 v0 = V2(pos.x - size.x/2, pos.y + size.y/2);
+    V2 v1 = V2(pos.x + size.x/2, pos.y + size.y/2);
+    V2 v2 = V2(pos.x, pos.y - size.y/2);
+    
+    Triangle triangle = {v0, v1, v2};
     draw_triangle(triangle, color); 
 }
 
